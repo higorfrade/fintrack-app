@@ -8,6 +8,8 @@ import axiosConfig from '../../utils/axiosConfig';
 import { API_ENDPOINTS } from '../../utils/apiEndpoints';
 import toast from 'react-hot-toast';
 import { LuLoaderCircle } from 'react-icons/lu';
+import ProfileImageSelector from '../../components/ProfileImageSelector';
+import uploadProfileImage from '../../utils/uploadProfileImage';
 
 const Signup = () => {
   const [name, setName] = useState("");
@@ -17,11 +19,13 @@ const Signup = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [profileImage, setProfileImage] = useState(null);
 
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    let profileImageUrl = "";
     setIsLoading(true);
 
     if (!name.trim()) {
@@ -52,11 +56,17 @@ const Signup = () => {
 
     // Chamada da API de Registro
     try {
+      if (profileImage) {
+        const imageUrl = await uploadProfileImage(profileImage);
+        profileImageUrl = imageUrl || "";
+      }
+
       const res = await axiosConfig.post(API_ENDPOINTS.REGISTER, {
         name,
         phoneNumber,
         email,
-        password
+        password,
+        profileImageUrl
       });
       if (res.status === 201) {
         toast.success("Conta criada com sucesso.");
@@ -92,8 +102,8 @@ const Signup = () => {
             </p>
 
             <form onSubmit={handleSubmit} className="space-y-4">
-              <div className="flex justify-center mb-6">
-                {/* Imagem de Perfil */}
+              <div className="flex justify-center mb-4">
+                {/*<ProfileImageSelector image={profileImage} setImage={setProfileImage} />*/}
               </div>
               <div className="grid gap-1">
                 <Input 
