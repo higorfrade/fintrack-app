@@ -16,25 +16,25 @@ export const SIDE_BAR_DATA = [
     },
     {
         id: "02",
-        label: "Category",
+        label: "Categoria",
         icon: LuList,
         path: "/category"
     },
     {
         id: "03",
-        label: "Income",
+        label: "Receita",
         icon: LuWallet,
         path: "/income"
     },
     {
         id: "04",
-        label: "Expense",
+        label: "Despesa",
         icon: LuHandCoins,
         path: "/expense"
     },
     {
         id: "05",
-        label: "Filter",
+        label: "Filtro",
         icon: LuListFilter,
         path: "/filter"
     }

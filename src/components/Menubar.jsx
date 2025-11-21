@@ -1,4 +1,4 @@
-import React, { useContext, useRef, useState } from 'react'
+import React, { useContext, useEffect, useRef, useState } from 'react'
 import { AppContext } from '../context/AppContext';
 import { useNavigate } from 'react-router-dom';
 import { LuLogOut, LuMenu, LuUser, LuX } from 'react-icons/lu';
@@ -19,6 +19,22 @@ const Menubar = ({activeMenu}) => {
 
         navigate("/login");
     }
+
+    useEffect(() => {
+        const handleClickOutside = (e) => {
+            if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
+                setShowDropdown(false);
+            }
+        }
+
+        if (showDropdown) {
+                document.addEventListener("mousedown", handleClickOutside);
+        }
+
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside);
+        }
+    }, [showDropdown]);
 
   return (
     <div className="flex items-center justify-between gap-5 bg-white border border-b border-gray-200/50 backdrop-blur-[2px] py-4 px-4 sm:px-7 sticky top-0 z-30">
