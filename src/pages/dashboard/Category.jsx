@@ -31,7 +31,7 @@ const Category = () => {
 
     } catch (error) {
       console.error("Ops... Algo deu errado. Por favor, tente novamente.", error);
-      toast.error(error.message);
+      toast.error(error.response?.data?.message || "Falha ao buscar os detalhes das categorias");
 
     } finally {
       setLoading(false);
@@ -111,7 +111,7 @@ const Category = () => {
           <h2 className="text-2xl font-semibold">Todas as Categorias</h2>
           <button 
               onClick={() => setOpenAddCategory(true)}
-              className="add-btn flex items-center gap-1 rounded-lg py-2 px-3 bg-black text-white hover:scale-105 font-medium cursor-pointer">
+              className="add-btn gap-1 rounded-lg py-2 px-3 hover:scale-105 font-medium">
             <LuPlus size={25} />
             Adicionar Categoria
           </button>

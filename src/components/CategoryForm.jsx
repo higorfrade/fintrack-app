@@ -72,7 +72,7 @@ const CategoryForm = ({onAddCategory, onEditCategory, initialCategoryData, isEdi
                 type="button"
                 onClick={handleSubmit}
                 disabled={loading}
-                className="add-btn-static bg-black text-white hover:bg-white border hover:text-black cursor-pointer">
+                className="add-btn-static">
                 {loading ? (
                     <>
                         <LuLoaderCircle className="w-4 h-4 animate-spin" />
