@@ -39,5 +39,5 @@ export const useUser = () => {
         return () => {
             isMounted = false;
         }
-    }, [setUser, clearUser, navigate]);
+    }, [user, setUser, clearUser, navigate]);
 }

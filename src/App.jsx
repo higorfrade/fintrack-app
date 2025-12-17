@@ -6,6 +6,7 @@ import Category from "./pages/dashboard/Category.jsx";
 import Filter from "./pages/dashboard/Filter.jsx";
 import Login from "./pages/auth/Login.jsx";
 import Signup from "./pages/auth/Signup.jsx";
+import LandingPage from "./pages/dashboard/LandingPage.jsx";
 import { Toaster } from "react-hot-toast";
 
 
@@ -16,6 +17,7 @@ const App = () => {
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Root />} />
+          <Route path="/home" element={<LandingPage />} />
           <Route path="/dashboard" element={<Home />} />
           <Route path="/income" element={<Income />} />
           <Route path="/expense" element={<Expense />} />
@@ -35,7 +37,7 @@ const Root = () => {
   return isAuthenticated ? (
     <Navigate to="/dashboard" />
   ) : (
-    <Navigate to="/login" />
+    <Navigate to="/home" />
   )
 }
 

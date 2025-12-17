@@ -8,6 +8,7 @@ import { API_ENDPOINTS } from '../../utils/apiEndpoints';
 import toast from 'react-hot-toast';
 import Modal from '../../components/Modal';
 import CategoryForm from '../../components/CategoryForm';
+import DeleteAlert from '../../components/DeleteAlert';
 
 const Category = () => {
   useUser();
@@ -16,6 +17,10 @@ const Category = () => {
   const [openAddCategory, setOpenAddCategory] = useState(false);
   const [openEditCategory, setOpenEditCategory] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState(null);
+  const [openDeleteAlert, setOpenDeleteAlert] = useState({
+    show: false,
+    data: null
+  });
 
   const fetchCategoryDetails = async () => {
     if (loading) return;
@@ -37,10 +42,6 @@ const Category = () => {
       setLoading(false);
     }
   }
-
-  useEffect(() => {
-    fetchCategoryDetails();
-  }, []);
 
   const handleAddCategory = async (category) => {
     const {name, type, icon} = category;
@@ -103,6 +104,23 @@ const Category = () => {
     }
   }
 
+  const deleteCategory = async (id) => {
+    try {
+      await axiosConfig.delete(API_ENDPOINTS.DELETE_CATEGORY(id));
+      setOpenDeleteAlert({show: false, data: null});
+      toast.success("Categoria excluida com sucesso.");
+      fetchCategoryDetails();
+    } catch (error) {
+      console.error("Erro ao excluir a categoria", error);
+      toast.error(error.response?.data?.message || "Falha ao excluir categoria.");
+      toast("Atenção: Você não pode excluir categorias que estão vinculadas a uma transação!");
+    }
+  }
+
+  useEffect(() => {
+    fetchCategoryDetails();
+  }, []);
+
   return (
     <Dashboard activeMenu="Categoria">
       <div className="my-5 mx-auto">
@@ -118,7 +136,8 @@ const Category = () => {
         </div>
 
         {/* Lista de Categorias */}
-        <CategoryList categories={categoryData} onEditCategory={handleEditCategory} />
+        <CategoryList categories={categoryData} onEditCategory={handleEditCategory}
+        onDelete={(id) => setOpenDeleteAlert({show: true, data: id})} />
 
         {/* Modal p/ Adicionar Categoria */}
         <Modal
@@ -142,6 +161,18 @@ const Category = () => {
             initialCategoryData={selectedCategory}
             onEditCategory={handleUpdateCategory}
             isEditing={true}
+          />
+        </Modal>
+
+        {/* Deletar Categorias */}
+        <Modal
+          isOpen={openDeleteAlert.show}
+          onClose={() => setOpenDeleteAlert({show: false, data: null})}
+          title="Excluir Categoria"
+        >
+          <DeleteAlert 
+            content="Tem certeza de que deseja excluir esta categoria?"
+            onDelete={() => deleteCategory(openDeleteAlert.data)}
           />
         </Modal>
       </div>

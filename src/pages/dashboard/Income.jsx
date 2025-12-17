@@ -5,7 +5,6 @@ import axiosConfig from '../../utils/axiosConfig';
 import { API_ENDPOINTS } from '../../utils/apiEndpoints';
 import TransactionList from '../../components/TransactionList';
 import Modal from '../../components/Modal';
-import { LuPlus } from 'react-icons/lu';
 import TransactionForm from '../../components/TransactionForm';
 import toast from 'react-hot-toast';
 import DeleteAlert from '../../components/DeleteAlert';
