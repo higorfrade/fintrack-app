@@ -107,7 +107,6 @@ const TransactionList = ({transactions, title, onDelete, onDownload, onEmail, is
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2">
-            {/* Mostrar as transações */}
             {transactions?.map((transaction) => (
                 <TransactionInfoCard 
                     key={transaction.id}

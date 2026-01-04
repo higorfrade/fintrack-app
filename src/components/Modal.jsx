@@ -7,9 +7,7 @@ const Modal = ({isOpen, onClose, children, title}) => {
   return (
     <div className="fixed inset-0 z-50 flex justify-center items-center w-full h-full overflow-hidden bg-black/40 backdrop-blur-sm">
         <div className="relative p-4 w-full max-w-2xl max-h-[90vh]">
-            {/* Modal Header */}
             <div className="relative bg-white rounded-xl shadow-2xl border border-gray-100">
-                {/* Modal Content */}
                 <div className="flex items-center justify-between p-5 md:p-6 border-b border-gray-100 rounded-t-xl">
                     <h3 className="text-xl font-semibold text-gray-800">
                         {title}
@@ -23,7 +21,6 @@ const Modal = ({isOpen, onClose, children, title}) => {
                     </button>
                 </div>
 
-                {/* Modal Body */}
                 <div className="p-5 md:p-6 text-black">
                     {children}
                 </div>

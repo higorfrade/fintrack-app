@@ -8,6 +8,8 @@ import toast from 'react-hot-toast';
 import TransactionInfoCard from '../../components/TransactionInfoCard';
 import moment from 'moment';
 import TransactionItemSkeleton from '../../components/TransactionItemSkeleton';
+import Modal from '../../components/Modal';
+import DeleteAlert from '../../components/DeleteAlert';
 
 const Filter = () => {
   useUser();
@@ -20,6 +22,10 @@ const Filter = () => {
   const [transactions, setTransactions] = useState([]);
   const [loadedType, setLoadedType] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [openDeleteAlert, setOpenDeleteAlert] = useState({
+    show: false,
+    data: null
+  });
 
   const handleSearch = async (e) => {
     e.preventDefault();
@@ -46,6 +52,23 @@ const Filter = () => {
       toast.error(error.response?.data?.message || "Falha ao carregar as transações. Por favor, tente novamente.");
     } finally {
       setLoading(false);
+    }
+  }
+
+  const deleteTransaction = async (id) => {
+    try {
+      const endpoint = loadedType === "receita" 
+        ? API_ENDPOINTS.DELETE_INCOME(id) 
+        : API_ENDPOINTS.DELETE_EXPENSE(id);
+
+      await axiosConfig.delete(endpoint);
+      
+      setOpenDeleteAlert({ show: false, data: null });
+      toast.success(`${loadedType === "receita" ? "Receita" : "Despesa"} excluída com sucesso.`);
+      
+      setTransactions(transactions.filter(t => t.id !== id));
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Falha ao excluir transação.");
     }
   }
   
@@ -121,11 +144,22 @@ const Filter = () => {
                 date={moment(transaction.date).format("DD MMM YYYY")}
                 amount={transaction.amount}
                 type={loadedType}
-                hideDeleteButton
+                onDelete={() => setOpenDeleteAlert({ show: true, data: transaction.id })}
               />
             ))
           )}
         </div>
+
+        <Modal 
+          isOpen={openDeleteAlert.show}
+          onClose={() => setOpenDeleteAlert({ show: false, data: null })}
+          title={`Excluir ${loadedType === "receita" ? "Receita" : "Despesa"}`}
+        >
+          <DeleteAlert 
+            content="Tem certeza de que deseja excluir esta transação? Esta ação não pode ser desfeita."
+            onDelete={() => deleteTransaction(openDeleteAlert.data)}
+          />
+        </Modal>
       </div>
     </Dashboard>
   )

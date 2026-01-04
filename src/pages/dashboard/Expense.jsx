@@ -26,7 +26,6 @@ const Expense = () => {
       const response = await axiosConfig.get(API_ENDPOINTS.GET_ALL_EXPENSES);
 
       if (response.status === 200) {
-        console.log(response.data);
         return response.data;
       }
     } catch (error) {

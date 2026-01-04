@@ -93,7 +93,6 @@ const Income = () => {
         toast.success("Receita adicionada com sucesso.");
         const updatedData = await fetchIncomeDetails();
         setIncomeData(updatedData);
-        // fetchIncomeCategories();
       }
     } catch (error) {
       toast.error(error.response?.data?.message || "Falha ao adicionar receita.");
@@ -155,7 +154,6 @@ const Income = () => {
         setIncomeData(incomeDetails);
         setCategories(incomeCategories);
       } catch (error) {
-        console.error("Erro ao carregar todos os dados:", error);
         toast.error(error.response?.data?.message || "Falha ao carregar todos os dados");
       } finally {
         setLoading(false);
