@@ -1,10 +1,12 @@
 import { LuHandCoins, LuLandmark, LuList, LuListFilter, LuWallet } from "react-icons/lu";
 import fintrack_logo from "./fintrack-logo.png";
 import fintrack_alt_logo from "./fintrack-w-logo.png";
+import fintrack_app from "./fintrack-page.png";
 
 export const assets = {
     fintrack_logo,
-    fintrack_alt_logo
+    fintrack_alt_logo,
+    fintrack_app
 }
 
 export const SIDE_BAR_DATA = [

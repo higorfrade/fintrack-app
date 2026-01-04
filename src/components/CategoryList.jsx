@@ -1,7 +1,22 @@
 import React from 'react'
 import { LuPackage, LuPen, LuTrash2 } from 'react-icons/lu'
+import TransactionItemSkeleton from './TransactionItemSkeleton';
 
-const CategoryList = ({categories, onEditCategory, hideDeleteButton, onDelete}) => {
+const CategoryList = ({categories, onEditCategory, hideDeleteButton, onDelete, isLoading}) => {
+  if (isLoading) {
+    return (
+      <div className="card animate-pulse">
+        <div className="flex items-center justify-between mb-4">
+          <div className="h-6 w-32 bg-gray-200 rounded"></div>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+          {[...Array(3)].map((_, i) => <TransactionItemSkeleton key={i} isCategory={true} />)}
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="card">
       <div className="flex items-center justify-between mb-4">

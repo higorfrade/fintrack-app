@@ -4,8 +4,9 @@ import TransactionInfoCard from './TransactionInfoCard'
 import moment from 'moment'
 import axiosConfig from '../utils/axiosConfig'
 import { API_ENDPOINTS } from '../utils/apiEndpoints'
+import TransactionItemSkeleton from './TransactionItemSkeleton'
 
-const TransactionList = ({transactions, title, onDelete, onDownload, onEmail}) => {
+const TransactionList = ({transactions, title, onDelete, onDownload, onEmail, isLoading}) => {
     const [categories, setCategories] = useState([]);
     const [emailing, setEmailing] = useState(false);
     const [downloading, setDownloading] = useState(false);
@@ -20,8 +21,27 @@ const TransactionList = ({transactions, title, onDelete, onDownload, onEmail}) =
     };
 
     useEffect(() => {
-        fetchCategories();
-    }, []);
+        if (!isLoading) {
+            fetchCategories();
+        }
+    }, [isLoading]);
+
+    if (isLoading) {
+        return (
+            <div className="card animate-pulse">
+                <div className="flex items-center justify-between mb-6">
+                    <div className="h-7 w-32 bg-gray-200 rounded"></div>
+                    <div className="flex gap-2">
+                        <div className="h-10 w-28 bg-gray-300 rounded-lg"></div>
+                        <div className="h-10 w-28 bg-gray-300 rounded-lg"></div>
+                    </div>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-x-4">
+                    {[...Array(2)].map((_, i) => <TransactionItemSkeleton key={i} />)}
+                </div>
+            </div>
+        );
+    }
 
     const getCategoryType = (categoryId) => {
         const category = categories.find((cat) => cat.id === categoryId);

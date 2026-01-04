@@ -7,7 +7,7 @@ import { validateEmail, validatePassword } from '../../utils/validation';
 import axiosConfig from '../../utils/axiosConfig';
 import { API_ENDPOINTS } from '../../utils/apiEndpoints';
 import toast from 'react-hot-toast';
-import { LuLoaderCircle } from 'react-icons/lu';
+import { LuArrowLeft, LuLoaderCircle } from 'react-icons/lu';
 import ProfileImageSelector from '../../components/ProfileImageSelector';
 import uploadProfileImage from '../../utils/uploadProfileImage';
 
@@ -78,7 +78,6 @@ const Signup = () => {
           toast.error("Já existe uma conta cadastrada com este email.");
         }
       } else {
-          console.error("Ops... Algo deu errado.", error);
           setError(error.message);
         }
     } finally {
@@ -93,6 +92,11 @@ const Signup = () => {
         <div className="relative z-10 w-full max-w-lg px-6">
 
           <div className="bg-white bg-opacity-95 backdrop-blur-sm rounded-lg shadow-2xl p-8 max-h-[95vh] overflow-y-auto">
+            <Link
+              to="/home"
+              className="absolute top-6 left-6 flex items-center gap-1 text-slate-600 hover:text-black transition-colors duration-200 group">
+              <LuArrowLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
+            </Link>
             <img src={assets.fintrack_logo} alt="Fintrack Logo" className="w-[40%] mx-auto mb-6 h-auto" />
             <h3 className="text-2xl font-semibold text-black text-center mb-2">
               Criar uma conta

@@ -5,7 +5,7 @@ import Input from '../../components/Input';
 import axiosConfig from '../../utils/axiosConfig';
 import { API_ENDPOINTS } from '../../utils/apiEndpoints';
 import { AppContext } from '../../context/AppContext';
-import { LuLoaderCircle } from 'react-icons/lu';
+import { LuArrowLeft, LuLoaderCircle } from 'react-icons/lu';
 import { validateEmail } from '../../utils/validation';
 
 const Login = () => {
@@ -22,42 +22,42 @@ const Login = () => {
     setIsLoading(true);
 
     if (!validateEmail(email)) {
-          setError("Por favor, insira um email válido")
-          setIsLoading(false)
-          return;
-        }
-    
-        if (!password.trim()) {
-          setError("Por favor, insira sua senha")
-          setIsLoading(false)
-          return;
-        }
-    
-        setError("");
+      setError("Por favor, insira um email válido")
+      setIsLoading(false)
+      return;
+    }
 
-        // Chamada da API de Login
-        try {
-          const res = await axiosConfig.post(API_ENDPOINTS.LOGIN, {
-            email,
-            password
-          });
-          const {token, user} = res.data;
-          if (token) {
-            localStorage.setItem("token", token);
-            setUser(user);
-            navigate("/dashboard");
-          }
-        } catch (error) {
-          if (error.response && error.response.data.message) {
-            setError(error.response.data.message)
-          } else {
-            console.error("Ops... Algo deu errado", error);
-            setError(error.message);
-          }
-          
-        } finally {
-          setIsLoading(false);
-        }
+    if (!password.trim()) {
+      setError("Por favor, insira sua senha")
+      setIsLoading(false)
+      return;
+    }
+
+    setError("");
+
+    // Chamada da API de Login
+    try {
+      const res = await axiosConfig.post(API_ENDPOINTS.LOGIN, {
+        email,
+        password
+      });
+      const { token, user } = res.data;
+      if (token) {
+        localStorage.setItem("token", token);
+        setUser(user);
+        navigate("/dashboard");
+      }
+    } catch (error) {
+      if (error.response && error.response.data.message) {
+        setError(error.response.data.message)
+        setPassword("");
+      } else {
+        setError(error.message);
+      }
+
+    } finally {
+      setIsLoading(false);
+    }
   }
 
   return (
@@ -67,12 +67,17 @@ const Login = () => {
         <div className="relative z-10 w-full max-w-lg px-6">
 
           <div className="bg-white bg-opacity-95 backdrop-blur-sm rounded-lg shadow-2xl p-8 max-h-[95vh] overflow-y-auto">
+            <Link
+              to="/home"
+              className="absolute top-6 left-6 flex items-center gap-1 text-slate-600 hover:text-black transition-colors duration-200 group">
+              <LuArrowLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
+            </Link>
             <img src={assets.fintrack_logo} alt="Fintrack Logo" className="w-[40%] mx-auto mb-6 h-auto" />
             <h3 className="text-2xl font-semibold text-black text-center mb-2">
               Entre na sua conta
             </h3>
             <p className="text-sm text-slate-700 text-center mb-6">
-              Por favor, insira os seus dados de login.
+              Por favor, insira os seus dados de login
             </p>
 
             <form onSubmit={handleSubmit} className="space-y-4">
@@ -92,6 +97,11 @@ const Login = () => {
                     onChange={(e) => setPassword(e.target.value)}
                     type="password"
                 />
+              </div>
+              <div className="flex justify-end -mt-2">
+                <Link to="/forgot-password" size="sm" className="text-sm text-link">
+                  Esqueci minha senha
+                </Link>
               </div>
               {error && (
                 <p className="text-red-800 text-sm text-center bg-red-50 p-2 rounded">

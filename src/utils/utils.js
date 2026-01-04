@@ -27,6 +27,8 @@ export const addThousandSeparator = (amount) => {
 
 
 export const prepareTransactionLineChartData = (data = []) => {
+    if (!Array.isArray(data)) return [];
+    
     // Reduce para agrupar as transações por data ('date')
     const groupedByDate = data.reduce((acc, item) => {
         const dateKey = item.date; // string da data

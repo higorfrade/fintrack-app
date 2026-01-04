@@ -29,7 +29,6 @@ const Home = () => {
         setDashboardData(response.data);
       }
     } catch (error) {
-      console.error("Ops... Algo deu errado. Por favor, tente novamente.", error);
       toast.error(error.response?.data?.message || "Falha ao carregar os dados do dashboard. Por favor, tente novamente.")
     } finally {
       setLoading(false);
@@ -47,12 +46,12 @@ const Home = () => {
       <Dashboard activeMenu="Dashboard">
         <div className="my-5 mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {/* Cards */}
             <InfoCard 
               icon={<LuPiggyBank />}
               label="Balança Total"
               value={addThousandSeparator(dashboardData?.totalBalance || 0)}
               color="bg-[#3A3A3A]"
+              isLoading={loading}
             />
 
             <InfoCard 
@@ -60,6 +59,7 @@ const Home = () => {
               label="Total de Receitas"
               value={addThousandSeparator(dashboardData?.totalIncome || 0)}
               color="bg-[#2ECC71]"
+              isLoading={loading}
             />
 
             <InfoCard 
@@ -67,35 +67,36 @@ const Home = () => {
               label="Total de Despesas"
               value={addThousandSeparator(dashboardData?.totalExpense || 0)}
               color="bg-[#E74C3C]"
+              isLoading={loading}
             />
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
-            {/* Últimas transacoes */}
             <RecentTransactions 
               transactions={dashboardData?.recentTransactions}
-              onMoreTransaction={() => navigate("/income")}
+              isLoading={loading}
             />
 
-            {/* Grafico de financas */}
             <FinanceOverview 
               totalBalance={dashboardData?.totalBalance || 0}
               totalIncome={dashboardData?.totalIncome || 0}
               totalExpense={dashboardData?.totalExpense || 0}
+              isLoading={loading}
             />
-            {/* Receitas */}
+
             <Transactions 
               transactions={dashboardData?.recent5Incomes || []}
               type="receita"
               onMore={() => navigate("/income")}
               title="Receitas recentes"
+              isLoading={loading}
             />
 
-            {/* Despesas */}
             <Transactions 
               transactions={dashboardData?.recent5Expenses || []}
               type="despesa"
               onMore={() => navigate("/expense")}
               title="Despesas recentes"
+              isLoading={loading}
             />
           </div>
         </div>

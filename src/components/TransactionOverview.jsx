@@ -1,20 +1,35 @@
-import React, { useEffect, useState } from 'react'
+import React, { useMemo } from 'react'
 import { prepareTransactionLineChartData } from '../utils/utils';
 import CustomLineChart from './CustomLineChart';
 import { LuPlus } from 'react-icons/lu';
 
-const TransactionOverview = ({transactions, title, onAddTransaction, type}) => {
-    const [chartData, setChartData] = useState([]);
+const TransactionOverview = ({transactions, title, onAddTransaction, type, isLoading}) => {
 
-    useEffect(() => {
-        const result = prepareTransactionLineChartData(transactions);
-        console.log(result);
-        setChartData(result);
-        
-        return () => {
-
+    const chartData = useMemo(() => {
+        if (isLoading || !transactions || transactions.length === 0) {
+            return [];
         }
-    }, [transactions]);
+
+        const result = prepareTransactionLineChartData(transactions);
+        console.log("Dados do gráfico", result);
+
+        return result;
+    }, [transactions, isLoading]);
+
+    if (isLoading) {
+        return (
+            <div className="card animate-pulse">
+                <div className="flex items-center justify-between">
+                    <div className="flex flex-col gap-2">
+                        <div className="h-7 w-64 bg-gray-200 rounded"></div>
+                        <div className="h-4 w-96 bg-gray-100 rounded mt-0.5"></div>
+                    </div>
+                    <div className="h-11 w-48 bg-gray-300 rounded-lg"></div>
+                </div>
+                <div className="mt-10 h-72 w-full bg-gray-50 rounded-lg"></div>
+            </div>
+        );
+    }
 
   return (
     <div className="card">

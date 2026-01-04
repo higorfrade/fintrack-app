@@ -14,7 +14,7 @@ const Income = () => {
   useUser();
   const [incomeData, setIncomeData] = useState([]);
   const [categories, setCategories] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [openAddIncome, setOpenAddIncome] = useState(false);
   const [openDeleteAlert, setOpenDeleteAlert] = useState({
     show: false,
@@ -22,21 +22,16 @@ const Income = () => {
   });
 
   const fetchIncomeDetails = async () => {
-    if (loading) return;
-    setLoading(true);
-
     try {
       const response = await axiosConfig.get(API_ENDPOINTS.GET_ALL_INCOMES);
 
       if (response.status === 200) {    
-        console.log(response.data);
-        setIncomeData(response.data);
+        return response.data;
       }
     } catch (error) {
-      console.error("Ops... Algo deu errado. Por favor, tente novamente.", error);
       toast.error(error.response?.data?.message || "Falha ao buscar os detalhes das receitas.");
-    } finally {
-      setLoading(false);
+
+      return [];
     }
   }
 
@@ -45,12 +40,12 @@ const Income = () => {
       const response = await axiosConfig.get(API_ENDPOINTS.CATEGORY_BY_TYPE("receita"));
 
       if (response.status === 200) {
-        console.log("Categorias de receita", response.data);
-        setCategories(response.data);
+        return response.data;
       }
     } catch (error) {
-      console.error("Ops... Algo deu errado. Por favor, tente novamente.", error);
       toast.error(error.response?.data?.message || "Falha ao buscar as categorias de receita.");
+
+      return [];
     }
   }
 
@@ -96,11 +91,11 @@ const Income = () => {
       if (response.status === 201) {
         setOpenAddIncome(false);
         toast.success("Receita adicionada com sucesso.");
-        fetchIncomeDetails();
-        fetchIncomeCategories();
+        const updatedData = await fetchIncomeDetails();
+        setIncomeData(updatedData);
+        // fetchIncomeCategories();
       }
     } catch (error) {
-      console.error("Erro ao adicionar a receita", error);
       toast.error(error.response?.data?.message || "Falha ao adicionar receita.");
     }
   }
@@ -110,9 +105,9 @@ const Income = () => {
       await axiosConfig.delete(API_ENDPOINTS.DELETE_INCOME(id));
       setOpenDeleteAlert({show: false, data: null});
       toast.success("Receita excluida com sucesso.");
-      fetchIncomeDetails();
+      const updatedData = await fetchIncomeDetails();
+      setIncomeData(updatedData);
     } catch (error) {
-      console.error("Erro ao excluir a receita", error);
       toast.error(error.response?.data?.message || "Falha ao excluir receita.");
     }
   }
@@ -132,7 +127,6 @@ const Income = () => {
 
       toast.success("Download das receitas realizado com sucesso.");
     } catch (error) {
-      console.error("Erro ao baixar os detalhes das receitas:", error);
       toast.error(error.response?.data?.message || "Falha ao baixar as receitas.");
     }
   }
@@ -150,8 +144,25 @@ const Income = () => {
   }
 
   useEffect(() => {
-    fetchIncomeDetails();
-    fetchIncomeCategories();
+    const loadAllData = async () => {
+
+      try {
+        const [incomeDetails, incomeCategories] = await Promise.all([
+          fetchIncomeDetails(),
+          fetchIncomeCategories()
+        ]);
+
+        setIncomeData(incomeDetails);
+        setCategories(incomeCategories);
+      } catch (error) {
+        console.error("Erro ao carregar todos os dados:", error);
+        toast.error(error.response?.data?.message || "Falha ao carregar todos os dados");
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    loadAllData();
   }, []);
   
   return (
@@ -159,8 +170,7 @@ const Income = () => {
       <div className="my-5 mx-auto">
         <div className="grid grid-cols-1 gap-6">
           <div>
-            {/* Visão geral das receitas */}
-            <TransactionOverview transactions={incomeData} title="Visão geral das Receitas" onAddTransaction={() => setOpenAddIncome(true)} type="receita" />
+            <TransactionOverview transactions={incomeData} title="Visão geral das Receitas" onAddTransaction={() => setOpenAddIncome(true)} type="receita" isLoading={loading} />
           </div>
 
           <TransactionList 
@@ -169,9 +179,9 @@ const Income = () => {
             onDelete={(id) => setOpenDeleteAlert({show: true, data: id})}
             onDownload={handleDownloadDetails}
             onEmail={handleEmailDetails}
+            isLoading={loading}
           />
 
-          {/* Adicionar Receitas */}
           <Modal 
             isOpen={openAddIncome}
             onClose={() => setOpenAddIncome(false)}
@@ -184,7 +194,6 @@ const Income = () => {
             />
           </Modal>
 
-          {/* Deletar Receitas */}
           <Modal 
             isOpen={openDeleteAlert.show}
             onClose={() => setOpenDeleteAlert({show: false, data: null})}

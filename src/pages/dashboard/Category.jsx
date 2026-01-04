@@ -30,12 +30,10 @@ const Category = () => {
       const response = await axiosConfig.get(API_ENDPOINTS.GET_ALL_CATEGORIES);
 
       if (response.status === 200) {
-        console.log("Categorias", response.data);
         setCategoryData(response.data);
       }
 
     } catch (error) {
-      console.error("Ops... Algo deu errado. Por favor, tente novamente.", error);
       toast.error(error.response?.data?.message || "Falha ao buscar os detalhes das categorias");
 
     } finally {
@@ -69,7 +67,6 @@ const Category = () => {
         fetchCategoryDetails();
       }
     } catch (error) {
-      console.error("Erro ao adicionar a categoria", error);
       toast.error(error.response?.data?.message || "Falha ao adicionar categoria.");
     }
   }
@@ -99,7 +96,6 @@ const Category = () => {
       setSelectedCategory(null);
       fetchCategoryDetails();
     } catch (error) {
-      console.error("Erro ao atualizar a categoria: ", error.response?.data?.message || error.message);
       toast.error(error.response?.data?.message || "Falha ao atualizar a categoria.");
     }
   }
@@ -111,7 +107,6 @@ const Category = () => {
       toast.success("Categoria excluida com sucesso.");
       fetchCategoryDetails();
     } catch (error) {
-      console.error("Erro ao excluir a categoria", error);
       toast.error(error.response?.data?.message || "Falha ao excluir categoria.");
       toast("Atenção: Você não pode excluir categorias que estão vinculadas a uma transação!");
     }
@@ -124,22 +119,29 @@ const Category = () => {
   return (
     <Dashboard activeMenu="Categoria">
       <div className="my-5 mx-auto">
-        {/* Button to add Category */}
         <div className="flex justify-between items-center mb-5">
-          <h2 className="text-2xl font-semibold">Todas as Categorias</h2>
-          <button 
-              onClick={() => setOpenAddCategory(true)}
-              className="add-btn gap-1 rounded-lg py-2 px-3 hover:scale-105 font-medium">
-            <LuPlus size={25} />
-            Adicionar Categoria
-          </button>
+          {loading ? (
+            <>
+              <div className="h-8 w-64 bg-gray-200 rounded animate-pulse"></div>
+              <div className="h-11 w-48 bg-gray-300 rounded-lg animate-pulse"></div>
+            </>
+          ) : (
+            <>
+              <h2 className="text-2xl font-semibold">Todas as Categorias</h2>
+              <button
+                onClick={() => setOpenAddCategory(true)}
+                className="add-btn gap-1 rounded-lg py-2 px-3 hover:scale-105 font-medium flex items-center"
+              >
+                <LuPlus size={25} />
+                Adicionar Categoria
+              </button>
+            </>
+          )}
         </div>
 
-        {/* Lista de Categorias */}
         <CategoryList categories={categoryData} onEditCategory={handleEditCategory}
-        onDelete={(id) => setOpenDeleteAlert({show: true, data: id})} />
+        onDelete={(id) => setOpenDeleteAlert({show: true, data: id})} isLoading={loading} />
 
-        {/* Modal p/ Adicionar Categoria */}
         <Modal
           isOpen={openAddCategory}
           onClose={() => setOpenAddCategory(false)}
@@ -148,7 +150,6 @@ const Category = () => {
           <CategoryForm onAddCategory={handleAddCategory} />
         </Modal>
 
-        {/* Modal p/ Editar Categoria */}
         <Modal
           isOpen={openEditCategory}
           onClose={() => {
@@ -164,7 +165,6 @@ const Category = () => {
           />
         </Modal>
 
-        {/* Deletar Categorias */}
         <Modal
           isOpen={openDeleteAlert.show}
           onClose={() => setOpenDeleteAlert({show: false, data: null})}

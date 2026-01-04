@@ -14,7 +14,7 @@ const Expense = () => {
   useUser();
   const [expenseData, setExpenseData] = useState([]);
   const [categories, setCategories] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [openAddExpense, setOpenAddExpense] = useState(false);
   const [openDeleteAlert, setOpenDeleteAlert] = useState({
     show: false,
@@ -22,21 +22,17 @@ const Expense = () => {
   })
 
   const fetchExpenseDetails = async () => {
-    if (loading) return;
-    setLoading(true);
-
     try {
       const response = await axiosConfig.get(API_ENDPOINTS.GET_ALL_EXPENSES);
 
       if (response.status === 200) {
         console.log(response.data);
-        setExpenseData(response.data);
+        return response.data;
       }
     } catch (error) {
-      console.error("Ops... Algo deu errado. Por favor, tente novamente.", error);
       toast.error(error.response?.data?.message || "Falha ao buscar os detalhes das despesas.");
-    } finally {
-      setLoading(false);
+
+      return [];
     }
   }
 
@@ -45,12 +41,12 @@ const Expense = () => {
       const response = await axiosConfig.get(API_ENDPOINTS.CATEGORY_BY_TYPE("despesa"));
 
       if (response.status === 200) {
-        console.log("Categorias de despesa", response.data);
-        setCategories(response.data);
+        return response.data;
       }
     } catch (error) {
-      console.error("Ops... Algo deu errado. Por favor, tente novamente.", error);
       toast.error(error.response?.data?.message || "Falha ao buscar as categorias de despesa.");
+
+      return [];
     }
   }
 
@@ -96,11 +92,10 @@ const Expense = () => {
       if (response.status === 201) {
         setOpenAddExpense(false);
         toast.success("Despesa adicionada com sucesso.");
-        fetchExpenseDetails();
-        fetchExpenseCategories();
+        const updatedData = await fetchExpenseDetails();
+        setExpenseData(updatedData);
       }
     } catch (error) {
-      console.error("Erro ao adicionar a despesa", error);
       toast.error(error.response?.data?.message || "Falha ao adicionar despesa.");
     }
   }
@@ -110,9 +105,9 @@ const Expense = () => {
       await axiosConfig.delete(API_ENDPOINTS.DELETE_EXPENSE(id));
       setOpenDeleteAlert({show: false, data: null});
       toast.success("Despesa excluida com sucesso.");
-      fetchExpenseDetails();
+      const updatedData = await fetchExpenseDetails();
+      setExpenseData(updatedData);
     } catch (error) {
-      console.error("Erro ao excluir a despesa", error);
       toast.error(error.response?.data?.message || "Falha ao excluir despesa.");
     }
   }
@@ -132,7 +127,6 @@ const Expense = () => {
 
       toast.success("Download das despesas realizado com sucesso.");
     } catch (error) {
-      console.error("Erro ao baixar os detalhes das despesas:", error);
       toast.error(error.response?.data?.message || "Falha ao baixar as despesas.");
     }
   }
@@ -150,8 +144,24 @@ const Expense = () => {
   }
 
   useEffect(() => {
-    fetchExpenseDetails();
-    fetchExpenseCategories();
+    const loadAllData = async () => {
+
+      try {
+        const [expenseDetails, expenseCategories] = await Promise.all([
+          fetchExpenseDetails(),
+          fetchExpenseCategories()
+        ]);
+
+        setExpenseData(expenseDetails);
+        setCategories(expenseCategories);
+      } catch (error) {
+        toast.error(error.response?.data?.message || "Falha ao carregar todos os dados");
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    loadAllData();
   }, []);
   
   return (
@@ -159,8 +169,7 @@ const Expense = () => {
       <div className="my-5 mx-auto">
         <div className="grid grid-cols-1 gap-6">
           <div>
-            {/* Visão geral das despesas */}
-            <TransactionOverview transactions={expenseData} title="Visão geral das Despesas" onAddTransaction={() => setOpenAddExpense(true)} type="despesa" />
+            <TransactionOverview transactions={expenseData} title="Visão geral das Despesas" onAddTransaction={() => setOpenAddExpense(true)} type="despesa" isLoading={loading} />
           </div>
 
           <TransactionList
@@ -169,9 +178,9 @@ const Expense = () => {
             onDelete={(id) => setOpenDeleteAlert({show: true, data: id})}
             onDownload={handleDownloadDetails}
             onEmail={handleEmailDetails}
+            isLoading={loading}
           />
 
-          {/* Adicionar Despesas */}
           <Modal
             isOpen={openAddExpense}
             onClose={() => setOpenAddExpense(false)}
@@ -184,7 +193,6 @@ const Expense = () => {
             />
           </Modal>
 
-          {/* Deletar Despesas */}
           <Modal
             isOpen={openDeleteAlert.show}
             onClose={() => setOpenDeleteAlert({show: false, data: null})}

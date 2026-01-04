@@ -3,7 +3,7 @@ import { API_ENDPOINTS } from "./apiEndpoints";
 const CLOUDINARY_UPLOAD_PRESET = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET;
 
 const uploadProfileImage = async (image) => {
-    const formData = new formData();
+    const formData = new FormData();
     formData.append("file", image);
     formData.append("upload_preset", CLOUDINARY_UPLOAD_PRESET);
 

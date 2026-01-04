@@ -23,5 +23,10 @@ export const API_ENDPOINTS = {
     EXPENSE_EMAIL: "/email/expense",
     APPLY_FILTER: "/filter",
     DASHBOARD_DATA: "/dashboard",
-    UPLOAD_IMAGE: `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`
+    FORGOT_PASSWORD: "/profiles/forgot-password",
+    RESET_PASSWORD: "/profiles/reset-password",
+    UPLOAD_IMAGE: `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`,
+    UPDATE_PROFILE_IMAGE: "/profiles/update-image",
+    UPDATE_PROFILE: "/profiles/update-details",
+    DELETE_ACCOUNT: "/profiles/delete-account"
 }

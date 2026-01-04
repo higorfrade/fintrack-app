@@ -7,6 +7,7 @@ import { API_ENDPOINTS } from '../../utils/apiEndpoints';
 import toast from 'react-hot-toast';
 import TransactionInfoCard from '../../components/TransactionInfoCard';
 import moment from 'moment';
+import TransactionItemSkeleton from '../../components/TransactionItemSkeleton';
 
 const Filter = () => {
   useUser();
@@ -17,11 +18,18 @@ const Filter = () => {
   const [sortField, setSortField] = useState("date");
   const [sortOrder, setSortOrder] = useState("asc");
   const [transactions, setTransactions] = useState([]);
+  const [loadedType, setLoadedType] = useState(null);
   const [loading, setLoading] = useState(false);
 
   const handleSearch = async (e) => {
     e.preventDefault();
     setLoading(true);
+
+    if (startDate && endDate && startDate > endDate) {
+      toast.error("A data inicial não pode ser maior que a data final.");
+      setLoading(false);
+      return;
+    }
 
     try {
       const response = await axiosConfig.post(API_ENDPOINTS.APPLY_FILTER, {
@@ -33,8 +41,8 @@ const Filter = () => {
         keyword
       });
       setTransactions(response.data);
+      setLoadedType(type);
     } catch (error) {
-      console.error("Ops... Algo deu errado. Por favor, tente novamente.", error);
       toast.error(error.response?.data?.message || "Falha ao carregar as transações. Por favor, tente novamente.");
     } finally {
       setLoading(false);
@@ -97,23 +105,26 @@ const Filter = () => {
           <div className="flex items-center justify-between mb-4">
             <h5 className="text-xl font-semibold">Transações</h5>
           </div>
-          {transactions.length === 0 && !loading? (
+          {transactions.length === 0 && !loading && (
             <p className="text-gray-500">Selecione os filtros e clique no ícone de lupa para aplicar e buscar as transações.</p>
-          ) : ""}
+          )}
           {loading ? (
-            <p className="text-gray-500">Carregando as transações</p>
-          ) : ""}
-          {transactions.map((transaction) => (
-            <TransactionInfoCard
-              key={transaction.id}
-              title={transaction.name}
-              icon={transaction.icon}
-              date={moment(transaction.date).format("DD MMM YYYY")}
-              amount={transaction.amount}
-              type={type}
-              hideDeleteButton
-            />
-          ))}
+            <div className="animate-pulse space-y-2">
+              {[...Array(2)].map((_, i) => <TransactionItemSkeleton key={i} />)}
+            </div>
+          ) : (
+            transactions.map((transaction) => (
+              <TransactionInfoCard
+                key={transaction.id}
+                title={transaction.name}
+                icon={transaction.icon}
+                date={moment(transaction.date).format("DD MMM YYYY")}
+                amount={transaction.amount}
+                type={loadedType}
+                hideDeleteButton
+              />
+            ))
+          )}
         </div>
       </div>
     </Dashboard>

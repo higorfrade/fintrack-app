@@ -10,14 +10,29 @@ const Sidebar = ({activeMenu}) => {
 
   return (
     <div className="w-64 h-[calc(100vh-61px)] bg-white border-gray-200/50 p-5 sticky top-[61px] z-20">
-        <div className="flex flex-col items-center justify-center gap-3 mt-3 mb-7">
-            {user?.profileImageUrl ? (
-                <img src={user?.profileImageUrl || ""} alt="Profile Image" className="w-20 h-20 bg-slate-400 rounded-full" />
-            ): (
-                <LuUser className="w-20 h-20 text-xl  bg-gray-100 rounded-full" />
-            )}
-            <h5 className="text-gray-950 font-medium leading-6">{user.name || ""}</h5>
-        </div>
+          <div
+              onClick={() => navigate("/profile")}
+              className={`flex flex-col items-center justify-center gap-3 mt-3 mb-7 p-4 rounded-2xl cursor-pointer transition-all duration-300 group ${activeMenu === "Perfil" ? "bg-gray-50" : "hover:bg-gray-50"}`}
+          >
+              <div className="relative">
+                  {user?.profileImageUrl ? (
+                      <img
+                          src={user?.profileImageUrl}
+                          alt="Profile Image"
+                          className="w-20 h-20 object-cover bg-slate-100 rounded-3xl shadow-sm border-2 border-transparent group-hover:border-black transition-all"
+                      />
+                  ) : (
+                      <div className="w-20 h-20 flex items-center justify-center bg-gray-100 rounded-3xl group-hover:bg-black group-hover:text-white transition-all text-gray-400">
+                          <LuUser size={32} />
+                      </div>
+                  )}
+              </div>
+              <div className="text-center">
+                  <h5 className="text-gray-950 font-bold leading-tight truncate max-w-[180px]">
+                      {user?.name || "Usuário"}
+                  </h5>
+              </div>
+          </div>
         {SIDE_BAR_DATA.map((item, index) => (
             <button
                 onClick={()  => navigate(item.path)}

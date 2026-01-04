@@ -1,6 +1,9 @@
 import React from 'react'
+import InfoCardSkeleton from './InfoCardSkeleton'
 
-const InfoCard = ({icon, label, value, color}) => {
+const InfoCard = ({icon, label, value, color, isLoading}) => {
+  if (isLoading) return <InfoCardSkeleton />;
+
   return (
     <div className="flex gap-6 bg-white p-6 rounded-2xl shadow-md shadow-gray-200 border border-gray-200/50">
         <div className={`w-14 h-14 flex items-center justify-center text-[26px] text-white ${color} rounded-full drop-shadow-xl`}>

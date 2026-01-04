@@ -1,17 +1,26 @@
 import React from 'react'
-import { LuArrowRight } from 'react-icons/lu'
 import TransactionInfoCard from './TransactionInfoCard'
 import moment from 'moment'
+import TransactionItemSkeleton from './TransactionItemSkeleton';
 
-const RecentTransactions = ({transactions, onMoreTransaction}) => {
+const RecentTransactions = ({transactions, isLoading}) => {
+    if (isLoading) {
+        return (
+            <div className="card animate-pulse">
+                <div className="flex items-center justify-between">
+                    <div className="h-6 w-48 bg-gray-200 rounded"></div>
+                </div>
+                <div className="mt-6 space-y-2">
+                    {[...Array(3)].map((_, i) => <TransactionItemSkeleton key={i} />)}
+                </div>
+            </div>
+        );
+    }
+
   return (
     <div className="card">
         <div className="flex items-center justify-between">
             <h4 className="text-lg">Transações recentes</h4>
-
-            <button className="card-btn" onClick={onMoreTransaction}>
-                Mais <LuArrowRight className="text-base" size={15} />
-            </button>
         </div>
 
         <div className="mt-6">
